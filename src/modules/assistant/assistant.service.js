@@ -1,6 +1,6 @@
 const analytics =
 require(
-"../../services/analytics.service"
+"../analytics/analytics.service"
 );
 
 const ai =

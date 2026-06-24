@@ -11,7 +11,7 @@ try{
 const data=
 await service.start(
 req.user.id,
-req.body
+req.body.target
 );
 
 res.json(
