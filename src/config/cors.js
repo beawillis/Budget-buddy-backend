@@ -1,8 +1,13 @@
-const cors = require("cors");
+//cors.js
+const corsOptions={
 
-const corsOptions = {
-  origin: "*",
-  credentials: true,
+    // Allow requests from the client URL specified in the environment variable
+origin:
+process.env.CLIENT_URL,
+
+credentials:true
+
 };
 
-module.exports = cors(corsOptions);
+module.exports=
+corsOptions;
