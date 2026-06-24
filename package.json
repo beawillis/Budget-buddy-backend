@@ -1,7 +1,7 @@
 {
   "name": "budget-buddy-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Production-grade Backend API for BudgetBuddy — a Financial Technology (FinTech) budgeting, savings, analytics, and financial wellness platform.",
   "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -26,7 +26,7 @@
     "ioredis": "^5.11.1",
     "joi": "^18.2.3",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.7.1",
+    "mongoose": "^9.7.2",
     "morgan": "^1.11.0",
     "multer": "^2.2.0",
     "multer-storage-cloudinary": "^4.0.0",
@@ -34,6 +34,7 @@
     "nodemailer": "^9.0.1",
     "pdfkit": "^0.19.1",
     "redis": "^6.0.0",
+    "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
     "yamljs": "^0.3.0",
@@ -42,5 +43,16 @@
   "devDependencies": {
     "dockerignore": "^0.2.0",
     "nodemon": "^3.1.14"
-  }
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beawillis/Budget-buddy-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/beawillis/Budget-buddy-backend/issues"
+  },
+  "homepage": "https://github.com/beawillis/Budget-buddy-backend#readme"
 }
