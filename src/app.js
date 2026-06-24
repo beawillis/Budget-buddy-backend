@@ -106,7 +106,11 @@ app.use(
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(mongoSanitize());
+app.use((req, res, next) => {
+  if (req.body) req.body = mongoSanitize.sanitize(req.body);
+  if (req.params) req.params = mongoSanitize.sanitize(req.params);
+  next();
+});
 app.use(hpp());
 app.use(sanitize);
 app.use("/health",health); //use the health routes for any requests to /health
