@@ -12,7 +12,7 @@ typeof obj[key] === "string"
 obj[key]=
 obj[key]
 .replace(/<script.*?>.*?<\/script>/gi,"")
-.replace(/on\w+\s*=/gi,"")
+.replace(/\bon\w+\s*=/gi,"")
 .trim();
 
 }
@@ -34,12 +34,12 @@ return obj;
 function cleanCopy(obj) {
 if (!obj || typeof obj !== "object")
 return obj;
-const copy = {};
+const copy = Array.isArray(obj) ? [] : {};
 for (const key of Object.keys(obj)) {
 if (typeof obj[key] === "string") {
 copy[key] = obj[key]
 .replace(/<script.*?>.*?<\/script>/gi,"")
-.replace(/on\w+\s*=/gi,"")
+.replace(/\bon\w+\s*=/gi,"")
 .trim();
 } else if (typeof obj[key] === "object") {
 copy[key] = cleanCopy(obj[key]);
