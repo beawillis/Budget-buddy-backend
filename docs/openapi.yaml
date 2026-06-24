@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  title: BudgetBuddy API
+  version: 1.0.0
+  description: BudgetBuddy Financial Management Backend
+servers:
+  - url: http://localhost:3000
+paths:
+  /:
+    get:
+      summary: Health Check
+      responses:
+        "200":
+          description: Server Running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: up
+
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: test@gmail.com
+                password:
+                  type: string
+                  example: Password123
+      responses:
+        "200":
+          description: Login Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    example: jwt_token_here
+
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fullName
+                - email
+                - password
+              properties:
+                fullName:
+                  type: string
+                  example: Bea Willis
+                email:
+                  type: string
+                  example: bea@gmail.com
+                password:
+                  type: string
+                  example: Password123
+      responses:
+        "201":
+          description: Registered Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true

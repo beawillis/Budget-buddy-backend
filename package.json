@@ -1,0 +1,46 @@
+{
+  "name": "budget-buddy-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "bullmq": "^5.79.1",
+    "cloudinary": "^1.41.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.2.0",
+    "hpp": "^0.2.3",
+    "ioredis": "^5.11.1",
+    "joi": "^18.2.3",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.7.1",
+    "morgan": "^1.11.0",
+    "multer": "^2.2.0",
+    "multer-storage-cloudinary": "^4.0.0",
+    "node-cron": "^4.4.1",
+    "nodemailer": "^9.0.1",
+    "pdfkit": "^0.19.1",
+    "redis": "^6.0.0",
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.19.0",
+    "yamljs": "^0.3.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "dockerignore": "^0.2.0",
+    "nodemon": "^3.1.14"
+  }
+}
