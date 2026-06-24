@@ -39,12 +39,6 @@ clean(req.body);
 if(req.params)
 clean(req.params);
 
-/*
-DO NOT overwrite req.query
-*/
-if(req.query)
-clean(req.query);
-
 next();
 
 };
