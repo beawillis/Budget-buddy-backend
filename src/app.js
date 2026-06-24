@@ -1,9 +1,11 @@
-const express=require("express");//import express from "express";
-const cors=require("cors"); //import cors from "cors";
-const helmet=require("helmet"); //import helmet from "helmet";
+const express=require("express");
+const cors=require("cors");
+const helmet=require("helmet");
+const mongoSanitize=require("express-mongo-sanitize");
+const hpp=require("hpp");
 
-const sanitize=require("./middlewares/sanitize"); //import sanitize from "./middleware/sanitize";
-const corsOptions=require("./config/cors"); //import corsOptions from "./config/cors";
+const sanitize=require("./middlewares/sanitize");
+const corsOptions=require("./config/cors");
 const app=express(); //create an instance of the express application
 
 const authRoutes =require("./modules/auth/auth.routes");//import the auth routes from auth.routes.js
@@ -101,10 +103,12 @@ app.use(
   })
 );
 
-app.use(helmet()); //use helmet middleware to set various HTTP headers for security
-app.use(cors(corsOptions));//use cors middleware with the specified options to enable cross-origin requests
-app.use(express.json());//use express.json middleware to parse JSON request bodies
-app.use(sanitize);//use sanitize middleware )to sanitize user input and prevent XSS attacks
+app.use(helmet());
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(mongoSanitize());
+app.use(hpp());
+app.use(sanitize);
 app.use("/health",health); //use the health routes for any requests to /health
 
 
@@ -150,17 +154,17 @@ assistant
 );
 
 app.use(
-"/api/savings",
+"/api/v1/savings",
 savings
 );
 
 app.use(
-"/api/loans",
+"/api/v1/loans",
 loans
 );
 
 app.use(
-"/api/investments",
+"/api/v1/investments",
 investments
 );
 

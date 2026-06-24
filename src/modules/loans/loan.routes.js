@@ -2,6 +2,11 @@ const router=
 require("express")
 .Router();
 
+const auth=
+require(
+"../../middlewares/auth"
+);
+
 const validate=
 require(
 "../../middlewares/validate"
@@ -17,8 +22,6 @@ require(
 "./loan.controller"
 );
 
-
-
 router.post(
 
 "/calculate",
@@ -31,11 +34,11 @@ controller.calculate
 
 );
 
-
-
 router.post(
 
 "/save",
+
+auth,
 
 validate(
 validator.save
@@ -44,8 +47,6 @@ validator.save
 controller.save
 
 );
-
-
 
 module.exports=
 router;

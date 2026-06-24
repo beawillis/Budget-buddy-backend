@@ -12,9 +12,9 @@ require(
 "./assistant.controller"
 );
 
-router.get(
+router.post(
 
-"/",
+"/chat",
 
 auth,
 

@@ -6,8 +6,11 @@ require(
 exports.summary =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 res.json(
 
@@ -19,5 +22,9 @@ req.user.id
 )
 
 );
+
+}catch(err){
+next(err);
+}
 
 };

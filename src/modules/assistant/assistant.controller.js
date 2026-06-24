@@ -6,8 +6,11 @@ require(
 exports.chat =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 res.json(
 
@@ -18,5 +21,9 @@ req.user.id
 )
 
 );
+
+}catch(err){
+next(err);
+}
 
 };

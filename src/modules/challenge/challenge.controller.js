@@ -6,8 +6,11 @@ require(
 exports.start =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 res.json(
 
@@ -21,13 +24,20 @@ req.body.expense
 
 );
 
+}catch(err){
+next(err);
+}
+
 };
 
 exports.get =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 res.json(
 
@@ -38,5 +48,9 @@ req.user.id
 )
 
 );
+
+}catch(err){
+next(err);
+}
 
 };

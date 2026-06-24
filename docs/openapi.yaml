@@ -2,13 +2,348 @@ openapi: 3.0.0
 info:
   title: BudgetBuddy API
   version: 1.0.0
-  description: BudgetBuddy Financial Management Backend
+  description: BudgetBuddy Financial Management Backend API
 servers:
   - url: http://localhost:3000
+    description: Local development
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Server Error"
+
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "665abc123def456789012345"
+        name:
+          type: string
+          example: "Bea Willis"
+        email:
+          type: string
+          example: "bea@gmail.com"
+        avatar:
+          type: object
+          properties:
+            url:
+              type: string
+            publicId:
+              type: string
+        theme:
+          type: string
+          enum: [light, dark]
+          example: "light"
+        role:
+          type: string
+          enum: [user, admin]
+          example: "user"
+        preferences:
+          type: object
+          properties:
+            currency:
+              type: string
+              example: "UGX"
+            notifications:
+              type: boolean
+              example: true
+        financialProfile:
+          type: object
+          properties:
+            occupation:
+              type: string
+            education:
+              type: string
+            region:
+              type: string
+            creditScore:
+              type: number
+              example: 500
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Transaction:
+      type: object
+      properties:
+        _id:
+          type: string
+        userId:
+          type: string
+        type:
+          type: string
+          enum: [income, expense, savings, investment]
+        amount:
+          type: number
+          example: 50000
+        category:
+          type: string
+          example: "Food"
+        description:
+          type: string
+          example: "Grocery shopping"
+        date:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    Category:
+      type: object
+      properties:
+        _id:
+          type: string
+        userId:
+          type: string
+        name:
+          type: string
+          example: "Food"
+
+    Goal:
+      type: object
+      properties:
+        _id:
+          type: string
+        userId:
+          type: string
+        name:
+          type: string
+          example: "Buy a laptop"
+        target:
+          type: number
+          example: 2000000
+        saved:
+          type: number
+          example: 500000
+        deadline:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [active, completed]
+          example: "active"
+        createdAt:
+          type: string
+          format: date-time
+
+    Challenge:
+      type: object
+      properties:
+        _id:
+          type: string
+        userId:
+          type: string
+        target:
+          type: number
+          example: 1000
+        saved:
+          type: number
+          example: 250
+        status:
+          type: string
+          example: "active"
+
+    Savings:
+      type: object
+      properties:
+        _id:
+          type: string
+        user:
+          type: string
+        target:
+          type: number
+          example: 500000
+        saved:
+          type: number
+          example: 100000
+        status:
+          type: string
+          example: "active"
+        createdAt:
+          type: string
+          format: date-time
+
+    Notification:
+      type: object
+      properties:
+        _id:
+          type: string
+        userId:
+          type: string
+        title:
+          type: string
+          example: "Goal Reached"
+        message:
+          type: string
+          example: "You reached your savings goal!"
+        read:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+
+    WalletSummary:
+      type: object
+      properties:
+        income:
+          type: number
+          example: 5000000
+        expense:
+          type: number
+          example: 2000000
+        balance:
+          type: number
+          example: 3000000
+
+    DashboardResponse:
+      type: object
+      properties:
+        wallet:
+          $ref: "#/components/schemas/WalletSummary"
+        health:
+          type: string
+          enum: [Good, Needs Attention]
+          example: "Good"
+
+    EmergencyFund:
+      type: object
+      properties:
+        target:
+          type: number
+          example: 6000000
+        available:
+          type: number
+          example: 3000000
+        progress:
+          type: number
+          example: 50
+
+    LoanCalculation:
+      type: object
+      properties:
+        monthly:
+          type: number
+          example: 33214.31
+        total:
+          type: number
+          example: 1195715.16
+        interest:
+          type: number
+          example: 195715.16
+
+    InvestmentSimulation:
+      type: object
+      properties:
+        future:
+          type: number
+          example: 1610.51
+
+    AnalyticsResponse:
+      type: object
+      properties:
+        income:
+          type: number
+        expense:
+          type: number
+        savings:
+          type: number
+        savingsRatio:
+          type: number
+        health:
+          type: string
+          enum: [Excellent, Moderate, At Risk]
+
+    AssistantResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Reduce expenses and increase savings."
+
+    SavingsStatus:
+      type: object
+      properties:
+        target:
+          type: number
+          example: 500000
+        saved:
+          type: number
+          example: 100000
+        remaining:
+          type: number
+          example: 400000
+        progress:
+          type: string
+          example: "20.0"
+        status:
+          type: string
+          example: "active"
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Authentication
+    description: Register and login
+  - name: Users
+    description: User profile management
+  - name: Transactions
+    description: Income and expense tracking
+  - name: Wallet
+    description: Financial summary
+  - name: Categories
+    description: Budget categories
+  - name: Dashboard
+    description: Financial overview
+  - name: Goals
+    description: Savings goals
+  - name: Challenge
+    description: Savings challenges
+  - name: Emergency
+    description: Emergency fund tracker
+  - name: Savings
+    description: Savings plans
+  - name: Loans
+    description: Loan simulation
+  - name: Investments
+    description: Investment simulation
+  - name: Notifications
+    description: User notifications
+  - name: Reports
+    description: PDF report export
+  - name: Analytics
+    description: Financial analytics
+  - name: Assistant
+    description: AI financial assistant
+  - name: Health
+    description: API health check
+
 paths:
   /:
     get:
-      summary: Health Check
+      tags:
+        - Health
+      summary: API root
+      security: []
       responses:
         "200":
           description: Server Running
@@ -17,15 +352,92 @@ paths:
               schema:
                 type: object
                 properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "BudgetBuddy Backend Running"
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      security: []
+      responses:
+        "200":
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
                   status:
                     type: string
-                    example: up
+                    example: "OK"
+                  service:
+                    type: string
+                    example: "Budget Buddy API"
+                  time:
+                    type: string
+                    format: date-time
+
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  example: "Bea Willis"
+                email:
+                  type: string
+                  format: email
+                  example: "bea@gmail.com"
+                password:
+                  type: string
+                  minLength: 6
+                  example: "Password123"
+      responses:
+        "201":
+          description: Registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIs..."
+        "400":
+          description: Validation error or user exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
   /api/v1/auth/login:
     post:
       tags:
         - Authentication
       summary: Login
+      security: []
       requestBody:
         required: true
         content:
@@ -38,30 +450,118 @@ paths:
               properties:
                 email:
                   type: string
-                  example: test@gmail.com
+                  format: email
+                  example: "bea@gmail.com"
                 password:
                   type: string
-                  example: Password123
+                  example: "Password123"
       responses:
         "200":
-          description: Login Success
+          description: Login success
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                    example: true
+                  user:
+                    $ref: "#/components/schemas/User"
                   token:
                     type: string
-                    example: jwt_token_here
+                    example: "eyJhbGciOiJIUzI1NiIs..."
+        "400":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
-  /api/v1/auth/register:
+  /api/v1/users/profile:
+    get:
+      tags:
+        - Users
+      summary: Get current user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+    put:
+      tags:
+        - Users
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                theme:
+                  type: string
+                  enum: [light, dark]
+                preferences:
+                  type: object
+                  properties:
+                    currency:
+                      type: string
+                    notifications:
+                      type: boolean
+                financialProfile:
+                  type: object
+                  properties:
+                    occupation:
+                      type: string
+                    education:
+                      type: string
+                    region:
+                      type: string
+                    creditScore:
+                      type: number
+                      minimum: 300
+                      maximum: 850
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /api/v1/users/avatar:
     post:
       tags:
-        - Authentication
-      summary: Register
+        - Users
+      summary: Upload user avatar
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Avatar uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /api/v1/transactions:
+    post:
+      tags:
+        - Transactions
+      summary: Create a transaction
       requestBody:
         required: true
         content:
@@ -69,22 +569,62 @@ paths:
             schema:
               type: object
               required:
-                - fullName
-                - email
-                - password
+                - type
+                - amount
+                - category
               properties:
-                fullName:
+                type:
                   type: string
-                  example: Bea Willis
-                email:
+                  enum: [income, expense, savings, investment]
+                amount:
+                  type: number
+                  minimum: 0
+                  example: 50000
+                category:
                   type: string
-                  example: bea@gmail.com
-                password:
+                  minLength: 2
+                  example: "Food"
+                description:
                   type: string
-                  example: Password123
+                  example: "Grocery shopping"
+                date:
+                  type: string
+                  format: date
       responses:
         "201":
-          description: Registered Successfully
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+    get:
+      tags:
+        - Transactions
+      summary: List all transactions
+      responses:
+        "200":
+          description: Array of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+
+  /api/v1/transactions/{id}:
+    delete:
+      tags:
+        - Transactions
+      summary: Delete a transaction
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
           content:
             application/json:
               schema:
@@ -93,3 +633,464 @@ paths:
                   success:
                     type: boolean
                     example: true
+
+  /api/v1/wallet/summary:
+    get:
+      tags:
+        - Wallet
+      summary: Get wallet summary (income, expense, balance)
+      responses:
+        "200":
+          description: Wallet summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletSummary"
+
+  /api/v1/categories:
+    post:
+      tags:
+        - Categories
+      summary: Create a category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: "Food"
+      responses:
+        "201":
+          description: Category created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+    get:
+      tags:
+        - Categories
+      summary: List all categories
+      responses:
+        "200":
+          description: Array of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+
+  /api/v1/categories/{id}:
+    delete:
+      tags:
+        - Categories
+      summary: Delete a category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+  /api/v1/dashboard:
+    get:
+      tags:
+        - Dashboard
+      summary: Get financial dashboard overview
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardResponse"
+
+  /api/v1/goals:
+    post:
+      tags:
+        - Goals
+      summary: Create a savings goal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - target
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                  example: "Buy a laptop"
+                target:
+                  type: number
+                  minimum: 1
+                  maximum: 1000000000
+                  example: 2000000
+                deadline:
+                  type: string
+                  format: date
+      responses:
+        "201":
+          description: Goal created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+    get:
+      tags:
+        - Goals
+      summary: List all goals
+      responses:
+        "200":
+          description: Array of goals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Goal"
+
+  /api/v1/goals/{id}/deposit:
+    post:
+      tags:
+        - Goals
+      summary: Contribute to a goal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: number
+                  minimum: 1
+                  maximum: 100000000
+                  example: 50000
+      responses:
+        "200":
+          description: Updated goal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+
+  /api/v1/challenge/start:
+    post:
+      tags:
+        - Challenge
+      summary: Start a savings challenge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - expense
+              properties:
+                expense:
+                  type: number
+                  example: 2000000
+      responses:
+        "200":
+          description: Challenge started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Challenge"
+
+  /api/v1/challenge:
+    get:
+      tags:
+        - Challenge
+      summary: Get current challenge progress
+      responses:
+        "200":
+          description: Challenge progress
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Challenge"
+
+  /api/v1/emergency:
+    get:
+      tags:
+        - Emergency
+      summary: Get emergency fund overview
+      responses:
+        "200":
+          description: Emergency fund status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyFund"
+
+  /api/v1/savings/start:
+    post:
+      tags:
+        - Savings
+      summary: Start a savings plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - target
+              properties:
+                target:
+                  type: number
+                  minimum: 1
+                  example: 500000
+      responses:
+        "200":
+          description: Savings plan created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Savings"
+
+  /api/v1/savings/deposit:
+    post:
+      tags:
+        - Savings
+      summary: Deposit into active savings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: number
+                  minimum: 1
+                  example: 50000
+      responses:
+        "200":
+          description: Updated savings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Savings"
+
+  /api/v1/savings/status:
+    get:
+      tags:
+        - Savings
+      summary: Get savings status
+      responses:
+        "200":
+          description: Savings progress
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavingsStatus"
+
+  /api/v1/loans/calculate:
+    post:
+      tags:
+        - Loans
+      summary: Calculate loan repayment
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - interestRate
+                - term
+              properties:
+                amount:
+                  type: number
+                  minimum: 1000
+                  example: 1000000
+                interestRate:
+                  type: number
+                  minimum: 0
+                  maximum: 100
+                  example: 12
+                term:
+                  type: number
+                  minimum: 1
+                  maximum: 40
+                  example: 3
+      responses:
+        "200":
+          description: Loan calculation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoanCalculation"
+
+  /api/v1/loans/save:
+    post:
+      tags:
+        - Loans
+      summary: Save a loan calculation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - interestRate
+                - term
+                - monthlyPayment
+              properties:
+                amount:
+                  type: number
+                  example: 1000000
+                interestRate:
+                  type: number
+                  example: 12
+                term:
+                  type: number
+                  example: 3
+                monthlyPayment:
+                  type: number
+                  example: 33214.31
+      responses:
+        "200":
+          description: Saved loan calculation
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/investments/simulate:
+    post:
+      tags:
+        - Investments
+      summary: Simulate investment returns
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - years
+                - rate
+              properties:
+                amount:
+                  type: number
+                  example: 1000000
+                years:
+                  type: number
+                  example: 5
+                rate:
+                  type: number
+                  example: 10
+      responses:
+        "200":
+          description: Investment simulation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvestmentSimulation"
+
+  /api/v1/notifications:
+    get:
+      tags:
+        - Notifications
+      summary: List user notifications
+      responses:
+        "200":
+          description: Array of notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /api/v1/reports/export:
+    get:
+      tags:
+        - Reports
+      summary: Export financial report as PDF
+      responses:
+        "200":
+          description: PDF document
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "403":
+          description: Admin access required
+
+  /api/v1/analytics/summary:
+    get:
+      tags:
+        - Analytics
+      summary: Get financial analytics
+      responses:
+        "200":
+          description: Analytics data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsResponse"
+
+  /api/v1/assistant/chat:
+    post:
+      tags:
+        - Assistant
+      summary: Chat with AI financial assistant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "How can I reduce expenses?"
+      responses:
+        "200":
+          description: AI response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssistantResponse"

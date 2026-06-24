@@ -1,6 +1,6 @@
 const Transaction =
 require(
-"../modules/transactions/transaction.model"
+"../transactions/transaction.model"
 );
 
 exports.analyze =

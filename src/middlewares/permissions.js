@@ -21,11 +21,12 @@ message:
 
 }
 
+const userRole = req.user.role || "user";
 
 if(
 
 !allowedRoles.includes(
-req.user.role
+userRole
 )
 
 ){

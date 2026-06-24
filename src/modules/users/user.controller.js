@@ -1,11 +1,13 @@
-const service = require("./user.service");//import the user service to handle user-related operations
+const service = require("./user.service");
 
-//profile controller
 exports.profile =
 async(
 req,
-res, next
+res,
+next
 )=>{
+
+try{
 
 const user =
 
@@ -20,14 +22,20 @@ res.json(
 user
 );
 
+}catch(err){
+next(err);
+}
+
 };
 
-//update controller
 exports.update =
 async(
 req,
-res, next
+res,
+next
 )=>{
+
+try{
 
 const user =
 
@@ -44,14 +52,20 @@ res.json(
 user
 );
 
+}catch(err){
+next(err);
+}
+
 };
 
-//upload avatar controller
 exports.avatar =
 async(
 req,
-res,next
+res,
+next
 )=>{
+
+try{
 
 const user =
 
@@ -67,5 +81,9 @@ req.file
 res.json(
 user
 );
+
+}catch(err){
+next(err);
+}
 
 };

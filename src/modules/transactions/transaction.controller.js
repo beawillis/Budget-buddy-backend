@@ -1,14 +1,16 @@
 const service =
 require(
 "./transaction.service"
-); //import the transaction service to handle business logic related to transactions
+);
 
-// controller function for creating transaction
 exports.create =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 const tx =
 
@@ -25,14 +27,20 @@ res
 .status(201)
 .json(tx);
 
+}catch(err){
+next(err);
+}
+
 };
 
-// controller function for listing all transactions of the authenticated user
 exports.list =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 const tx =
 
@@ -45,14 +53,20 @@ req.user.id
 
 res.json(tx);
 
+}catch(err){
+next(err);
+}
+
 };
 
-// controller function for deleting a transaction by its ID, ensuring that the transaction belongs to the authenticated user
 exports.remove =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 await service
 .remove(
@@ -68,5 +82,9 @@ res.json({
 success:true
 
 });
+
+}catch(err){
+next(err);
+}
 
 };

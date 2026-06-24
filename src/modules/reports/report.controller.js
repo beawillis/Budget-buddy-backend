@@ -11,8 +11,11 @@ require(
 exports.export =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 const data =
 
@@ -38,5 +41,9 @@ data,
 res
 
 );
+
+}catch(err){
+next(err);
+}
 
 };

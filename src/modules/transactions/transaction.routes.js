@@ -1,21 +1,31 @@
 const router =
 require("express")
-.Router(); //import the Router class from express and create a new router instance
+.Router();
 
 const auth =
 require(
 "../../middlewares/auth"
-); //import the auth middleware to protect transaction routes and ensure that only authenticated users can access them
+);
 
+const validate =
+require(
+"../../middlewares/validate"
+);
+
+const { createTransactionSchema } =
+require(
+"./transaction.validation"
+);
 
 const controller =
 require(
 "./transaction.controller"
-); //import the transaction controller to handle transaction-related requests such as creating, listing, and deleting transactions
+);
 
 router.post(
 "/",
 auth,
+validate(createTransactionSchema),
 controller.create
 );
 

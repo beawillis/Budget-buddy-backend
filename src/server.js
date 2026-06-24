@@ -8,7 +8,7 @@ const connectDB=require("./config/db"); //import the connectDB function from db.
 
 connectDB();
 
-const PORT=process.env.PORT||5000;
+const PORT=process.env.PORT||3000;
 
 app.listen(PORT,()=>{console.log(`Server running on ${PORT}`);
 

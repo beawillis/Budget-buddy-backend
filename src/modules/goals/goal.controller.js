@@ -6,8 +6,11 @@ require(
 exports.create =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 const goal =
 
@@ -23,13 +26,20 @@ res
 .status(201)
 .json(goal);
 
+}catch(err){
+next(err);
+}
+
 };
 
 exports.list =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 res.json(
 
@@ -41,13 +51,20 @@ req.user.id
 
 );
 
+}catch(err){
+next(err);
+}
+
 };
 
 exports.deposit =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 res.json(
 
@@ -61,5 +78,9 @@ req.body.amount
 )
 
 );
+
+}catch(err){
+next(err);
+}
 
 };
