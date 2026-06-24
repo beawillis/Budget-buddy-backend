@@ -104,7 +104,13 @@ app.use(
 );
 
 app.use(helmet());
-app.use(cors(corsOptions));
+
+app.use(cors({
+  origin: [
+    'https://budget-buddy-sigma-olive.vercel.app',  ]
+}));
+
+
 app.use(express.json());
 app.use((req, res, next) => {
   if (req.body) req.body = mongoSanitize.sanitize(req.body);
