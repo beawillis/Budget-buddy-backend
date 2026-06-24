@@ -4,7 +4,9 @@ require(
 );
 
 exports.simulate=
-(req,res)=>{
+(req,res,next)=>{
+
+try{
 
 res.json(
 
@@ -19,5 +21,9 @@ req.body.rate
 )
 
 );
+
+}catch(err){
+next(err);
+}
 
 };

@@ -6,8 +6,11 @@ require(
 exports.calculate=
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 const result=
 await service.calculate(
@@ -16,14 +19,21 @@ req.body
 
 res.json(result);
 
+}catch(err){
+next(err);
+}
+
 };
 
 
 exports.save=
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 const result=
 await service.save(
@@ -32,5 +42,9 @@ req.body
 );
 
 res.json(result);
+
+}catch(err){
+next(err);
+}
 
 };

@@ -8,7 +8,7 @@ require(
 "../../queues/email.queue"
 );
 
-exports.send =
+exports.create =
 async(
 userId,
 title,
@@ -47,7 +47,7 @@ createdAt:-1
 
 };
 
-exports.send =
+exports.sendEmail =
 
 async(
 email,

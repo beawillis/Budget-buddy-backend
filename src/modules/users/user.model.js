@@ -101,6 +101,19 @@ default:500
 
 },
 
+role:{
+
+type:String,
+
+enum:[
+"user",
+"admin"
+],
+
+default:"user"
+
+},
+
 firebaseUid:String
 
 },

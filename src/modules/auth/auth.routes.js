@@ -1,10 +1,11 @@
-const router = require("express").Router(); //import the Router class from express and create a new router instance
+const router = require("express").Router();
 
-const controller = require("./auth.controller"); //import the auth controller to handle authentication-related requests
+const controller = require("./auth.controller");
+const validate = require("../../middlewares/validate");
+const { registerSchema, loginSchema } = require("./auth.validation");
 
+router.post("/register", validate(registerSchema), controller.register);
 
-router.post("/register",controller.register); //define a POST route for user registration that calls the register controller
-
-router.post("/login",controller.login); //define a POST route for user login that calls the login controller
+router.post("/login", validate(loginSchema), controller.login);
 
 module.exports = router;

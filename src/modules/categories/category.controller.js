@@ -1,14 +1,16 @@
 const service =
 require(
 "./category.service"
-); //import the category service to handle business logic related to category operations such as creating a new category, listing all categories for the authenticated user, and deleting a category by id for the authenticated user
+);
 
-// controller for creating a new category
 exports.create =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 const category =
 
@@ -26,14 +28,20 @@ res
 category
 );
 
+}catch(err){
+next(err);
+}
+
 };
 
-// controller for listing all categories for the authenticated user
 exports.list =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 const categories =
 
@@ -47,14 +55,20 @@ res.json(
 categories
 );
 
+}catch(err){
+next(err);
+}
+
 };
 
-// controller for deleting a category by id for the authenticated user, which ensures that only the owner of the category can delete it by passing the userId along with the category id to the service function
 exports.remove =
 async(
 req,
-res
+res,
+next
 )=>{
+
+try{
 
 await service.remove(
 
@@ -69,5 +83,9 @@ res.json({
 success:true
 
 });
+
+}catch(err){
+next(err);
+}
 
 };
