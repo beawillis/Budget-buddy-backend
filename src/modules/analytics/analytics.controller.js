@@ -1,6 +1,6 @@
 const analytics =
 require(
-"../../services/analytics.service"
+"./analytics.service"
 );
 
 exports.summary =
