@@ -8,13 +8,14 @@ Production-grade Backend API for BudgetBuddy — a Financial Technology (FinTech
 
 BudgetBuddy Backend powers the BudgetBuddy financial platform by providing:
 
-* Secure Authentication
+* Secure Authentication (JWT + bcrypt)
 * User Profile Management
 * Transaction Processing
 * Wallet Management
 * Budget Categories
 * Savings Goals
 * Emergency Fund Tracking
+* Savings Plans
 * Savings Challenges
 * Loan Simulation
 * Investment Simulation
@@ -23,9 +24,9 @@ BudgetBuddy Backend powers the BudgetBuddy financial platform by providing:
 * AI Financial Assistant
 * Notifications & Alerts
 * Scheduled Financial Jobs
-* Cloud Media Uploads
+* Cloud Media Uploads (Cloudinary)
 * Email Services
-* Redis Queue Processing
+* Redis Queue Processing (BullMQ)
 * Docker Deployment
 * Render Cloud Deployment
 
@@ -35,17 +36,19 @@ The system is designed using a **modular architecture** for scalability, maintai
 
 # Architecture
 
+```
 Frontend (HTML/CSS/JS + Chart.js)
-↓
-Express API
-↓
-Controllers
-↓
-Services
-↓
-MongoDB + Redis
-↓
+         |
+    Express API
+         |
+    Controllers
+         |
+      Services
+         |
+  MongoDB + Redis
+         |
 Cloudinary / Email / Scheduler
+```
 
 ---
 
@@ -54,7 +57,7 @@ Cloudinary / Email / Scheduler
 ## Backend
 
 * Node.js
-* Express.js
+* Express.js 5
 * MongoDB
 * Mongoose
 
@@ -65,7 +68,8 @@ Cloudinary / Email / Scheduler
 
 ## Validation
 
-* Joi
+* Zod (auth, users, transactions, goals)
+* Joi (loans, savings)
 
 ## Storage
 
@@ -77,10 +81,19 @@ Cloudinary / Email / Scheduler
 * BullMQ
 * Redis
 
+## Security
+
+* Helmet
+* express-mongo-sanitize
+* hpp (HTTP Parameter Pollution protection)
+* Custom XSS sanitization
+* Rate Limiting
+* CORS
+
 ## Documentation
 
-* Swagger
-* OpenAPI
+* Swagger UI (`/api/docs`)
+* OpenAPI 3.0 (`docs/openapi.yaml`)
 
 ## Deployment
 
@@ -98,151 +111,166 @@ Cloudinary / Email / Scheduler
 
 ```plaintext
 backend/
-
-├── package.json
-├── .env
-├── .env.example
-├── Dockerfile
-├── render.yaml
-├── README.md
-
-├── src
-
-│
-├── server.js
-├── app.js
-
-├── config
-│
-├── middleware
-│
-├── modules
-│
-│   ├── auth
-│   ├── users
-│   ├── transactions
-│   ├── wallet
-│   ├── categories
-│   ├── dashboard
-│   ├── goals
-│   ├── emergency
-│   ├── savings
-│   ├── loans
-│   ├── investment
-│   ├── notifications
-│   ├── analytics
-│   ├── reports
-│   └── assistant
-
-├── services
-
-├── queues
-
-├── jobs
-
-├── docs
-
-└── tests
+|
++-- package.json
++-- .env
++-- .env.example
++-- Dockerfile
++-- render.yaml
++-- README.md
+|
++-- docs/
+|   +-- openapi.yaml
+|
++-- src/
+    +-- server.js
+    +-- app.js
+    |
+    +-- config/
+    |   +-- cloudinary.js
+    |   +-- cors.js
+    |   +-- db.js
+    |   +-- logger.js
+    |   +-- redis.js
+    |
+    +-- middlewares/
+    |   +-- auth.js
+    |   +-- error.js
+    |   +-- limiter.js
+    |   +-- permissions.js
+    |   +-- sanitize.js
+    |   +-- upload.js
+    |   +-- validate.js
+    |
+    +-- modules/
+    |   +-- auth/
+    |   +-- users/
+    |   +-- transactions/
+    |   +-- wallet/
+    |   +-- categories/
+    |   +-- dashboard/
+    |   +-- goals/
+    |   +-- challenge/
+    |   +-- emergency/
+    |   +-- savings/
+    |   +-- loans/
+    |   +-- investments/
+    |   +-- notifications/
+    |   +-- analytics/
+    |   +-- reports/
+    |   +-- assistant/
+    |   +-- jobs/
+    |
+    +-- services/
+    |   +-- ai.service.js
+    |   +-- analytics.service.js
+    |   +-- email.service.js
+    |   +-- pdf.service.js
+    |
+    +-- queues/
+    |   +-- alert.queue.js
+    |   +-- email.queue.js
+    |   +-- export.queue.js
+    |
+    +-- routes/
+        +-- health.routes.js
 ```
 
 ---
 
-# Features
+# API Endpoints
+
+All API routes use the `/api/v1/` prefix. Protected routes require a JWT token in the `Authorization: Bearer <token>` header.
 
 ---
 
 ## Authentication
 
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/auth/register` | No | Register a new user |
+| POST | `/api/v1/auth/login` | No | Login and receive JWT token |
+
 ### Register
 
-POST
-
 ```http
-/api/auth/register
+POST /api/v1/auth/register
+```
+
+```json
+{
+  "name": "Bea Willis",
+  "email": "bea@gmail.com",
+  "password": "Password123"
+}
+```
+
+Response (201):
+
+```json
+{
+  "user": {
+    "_id": "...",
+    "name": "Bea Willis",
+    "email": "bea@gmail.com",
+    "role": "user",
+    "theme": "light",
+    "preferences": { "currency": "UGX", "notifications": true }
+  },
+  "token": "eyJhbGciOiJIUzI1NiIs..."
+}
 ```
 
 ### Login
 
-POST
-
 ```http
-/api/auth/login
+POST /api/v1/auth/login
 ```
 
-### Current User
-
-GET
-
-```http
-/api/auth/me
+```json
+{
+  "email": "bea@gmail.com",
+  "password": "Password123"
+}
 ```
 
 ---
 
 ## User Management
 
-### Get Profile
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/v1/users/profile` | Yes | Get current user profile |
+| PUT | `/api/v1/users/profile` | Yes | Update user profile |
+| POST | `/api/v1/users/avatar` | Yes | Upload user avatar |
 
-```http
-GET /api/users/profile
-```
-
-### Update Profile
-
-```http
-PUT /api/users/profile
-```
-
-### Upload Avatar
-
-```http
-POST /api/users/avatar
-```
-
-Uploads handled via:
-
-* Multer
-* Cloudinary
+Uploads handled via Multer + Cloudinary.
 
 ---
 
 ## Transactions
 
-### Create Transaction
-
-```http
-POST /api/transactions
-```
-
-### Get Transactions
-
-```http
-GET /api/transactions
-```
-
-### Delete
-
-```http
-DELETE /api/transactions/:id
-```
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/transactions` | Yes | Create a transaction |
+| GET | `/api/v1/transactions` | Yes | List all transactions |
+| DELETE | `/api/v1/transactions/:id` | Yes | Delete a transaction |
 
 ---
 
 ## Wallet
 
-### Summary
-
-```http
-GET /api/wallet
-```
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/v1/wallet/summary` | Yes | Get wallet summary |
 
 Returns:
 
 ```json
 {
-"income":0,
-"expense":0,
-"balance":0
+  "income": 0,
+  "expense": 0,
+  "balance": 0
 }
 ```
 
@@ -250,90 +278,66 @@ Returns:
 
 ## Categories
 
-### Create
-
-```http
-POST /api/categories
-```
-
-### List
-
-```http
-GET /api/categories
-```
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/categories` | Yes | Create a category |
+| GET | `/api/v1/categories` | Yes | List all categories |
+| DELETE | `/api/v1/categories/:id` | Yes | Delete a category |
 
 ---
 
 ## Dashboard
 
-### Financial Overview
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/v1/dashboard` | Yes | Get financial overview |
 
-```http
-GET /api/dashboard
-```
-
-Returns:
-
-* Balance
-* Monthly trends
-* Spending breakdown
-* Health score
+Returns balance, monthly trends, spending breakdown, and health score.
 
 ---
 
 ## Goals
 
-### Create Goal
-
-```http
-POST /api/goals
-```
-
-### Contribute
-
-```http
-POST /api/goals/:id/contribute
-```
-
-### List
-
-```http
-GET /api/goals
-```
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/goals` | Yes | Create a savings goal |
+| GET | `/api/v1/goals` | Yes | List all goals |
+| POST | `/api/v1/goals/:id/deposit` | Yes | Contribute to a goal |
 
 ---
 
 ## Savings
 
-### Start Challenge
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/savings/start` | Yes | Start a savings plan |
+| POST | `/api/v1/savings/deposit` | Yes | Deposit into active savings |
+| GET | `/api/v1/savings/status` | Yes | Get savings status |
 
-```http
-POST /api/savings/start
-```
+---
 
-### Progress
+## Challenge
 
-```http
-GET /api/savings/progress
-```
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/challenge/start` | Yes | Start a savings challenge |
+| GET | `/api/v1/challenge` | Yes | Get current challenge progress |
 
 ---
 
 ## Emergency Fund
 
-### Overview
-
-```http
-GET /api/emergency
-```
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/v1/emergency` | Yes | Get emergency fund overview |
 
 Returns:
 
 ```json
 {
-"target":9000,
-"current":4000,
-"progress":44
+  "target": 9000,
+  "current": 4000,
+  "progress": 44
 }
 ```
 
@@ -341,39 +345,48 @@ Returns:
 
 ## Loans
 
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/loans/calculate` | No | Calculate loan repayment |
+| POST | `/api/v1/loans/save` | Yes | Save a loan calculation |
+
 ### Calculate
 
 ```http
-POST /api/loans/calculate
+POST /api/v1/loans/calculate
 ```
-
-Input:
 
 ```json
 {
-"amount":10000,
-"rate":12,
-"years":3
+  "amount": 1000000,
+  "interestRate": 12,
+  "term": 3
+}
+```
+
+Response:
+
+```json
+{
+  "monthly": 33214.31,
+  "total": 1195715.15,
+  "interest": 195715.15
 }
 ```
 
 ---
 
-## Investment
+## Investments
 
-### Simulate
-
-```http
-POST /api/investments/simulate
-```
-
-Input:
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/investments/simulate` | No | Simulate investment returns |
 
 ```json
 {
-"principal":1000,
-"rate":10,
-"years":5
+  "principal": 1000,
+  "rate": 10,
+  "years": 5
 }
 ```
 
@@ -381,49 +394,33 @@ Input:
 
 ## Reports
 
-### Export PDF
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/v1/reports/export` | Yes (admin) | Export financial report as PDF |
 
-```http
-GET /api/reports/pdf
-```
-
-### Export CSV
-
-```http
-GET /api/reports/csv
-```
+Requires admin role.
 
 ---
 
 ## Analytics
 
-### Insights
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/v1/analytics/summary` | Yes | Get financial analytics |
 
-```http
-GET /api/analytics
-```
-
-Returns:
-
-* Financial Score
-* Spending Trends
-* Recommendations
+Returns income, expense, savings, savings ratio, and financial health rating.
 
 ---
 
 ## AI Assistant
 
-### Chat
-
-```http
-POST /api/assistant/chat
-```
-
-Input:
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/assistant/chat` | Yes | Chat with AI financial assistant |
 
 ```json
 {
-"message":"How can I reduce expenses?"
+  "message": "How can I reduce expenses?"
 }
 ```
 
@@ -431,64 +428,67 @@ Input:
 
 ## Notifications
 
-### Send
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/v1/notifications` | Yes | List user notifications |
 
-```http
-POST /api/notifications
-```
+---
 
-Supports:
+## Health
 
-* Email
-* Reminders
-* Financial alerts
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/` | No | API root status |
+| GET | `/health` | No | Health check |
 
 ---
 
 # Environment Variables
 
-Create `.env`
+Create a `.env` file from `.env.example`:
 
 ```env
 PORT=3000
-
-MONGO_URI=
-
-JWT_SECRET=
-
-JWT_EXPIRES=7d
-
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-
-EMAIL=
-EMAIL_PASS=
-
-REDIS_URL=
-
-FRONTEND_URL=
-
 NODE_ENV=development
+
+MONGO_URI=mongodb://localhost:27017/budgetbuddy
+CLIENT_URL=http://your-client-url.com
+
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES=2d
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+EMAIL=your_email@gmail.com
+EMAIL_PASS=your_email_password
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_USERNAME=default
+REDIS_PASSWORD=your_password
 ```
+
+> **Note:** Redis is optional for local development. The server starts without it — only queue-based features (email jobs, alert processing) require Redis.
 
 ---
 
 # Installation
 
-Install dependencies
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Run locally
+Run locally (with hot reload):
 
 ```bash
 npm run dev
 ```
 
-Production
+Production:
 
 ```bash
 npm start
@@ -498,13 +498,13 @@ npm start
 
 # Docker
 
-Build
+Build:
 
 ```bash
 docker build -t budgetbuddy .
 ```
 
-Run
+Run:
 
 ```bash
 docker run -p 3000:3000 budgetbuddy
@@ -526,98 +526,76 @@ npm install
 npm start
 ```
 
-Environment Variables:
+### Required Environment Variables
 
-* MONGO_URI
-* REDIS_URL
-* JWT_SECRET
-* CLOUDINARY
-* EMAIL
+* `MONGO_URI`
+* `JWT_SECRET`
+* `JWT_EXPIRES`
+* `CLOUDINARY_CLOUD_NAME`
+* `CLOUDINARY_API_KEY`
+* `CLOUDINARY_API_SECRET`
+* `REDIS_HOST`
+* `REDIS_PORT`
+* `REDIS_PASSWORD`
+* `EMAIL`
+* `EMAIL_PASS`
+* `CLIENT_URL`
 
 ---
 
 # Queue System
 
-Queues:
+Queues (requires Redis):
 
 ```plaintext
-email.queue.js
-alert.queue.js
-export.queue.js
+email.queue.js    — sends email notifications
+alert.queue.js    — financial alerts and reminders
+export.queue.js   — PDF report generation
 ```
-
-Workers process:
-
-* emails
-* exports
-* reminders
 
 ---
 
 # Security
 
-Implemented:
-
-* Helmet
-* Rate Limiting
-* Input Sanitization
-* JWT
-* Role Permissions
-* CORS
-* Validation
-
----
-
-# Testing
-
-Run:
-
-```bash
-npm test
-```
-
-Manual:
-
-Postman Collection:
-
-```plaintext
-docs/postman/
-```
+* **Helmet** — HTTP security headers
+* **Rate Limiting** — brute-force protection on sensitive routes
+* **Input Sanitization** — XSS prevention (script tags, event handlers, query params)
+* **express-mongo-sanitize** — NoSQL injection prevention
+* **hpp** — HTTP Parameter Pollution protection
+* **JWT** — stateless authentication
+* **Role-based Permissions** — admin/user roles
+* **CORS** — configurable origin whitelist
+* **Validation** — Zod and Joi schema validation on all input routes
 
 ---
 
 # API Documentation
 
-Swagger:
+Interactive Swagger UI:
 
-```plaintext
-/api/docs
+```
+http://localhost:3000/api/docs
 ```
 
-OpenAPI:
+OpenAPI 3.0 specification:
 
-```plaintext
-docs/openapi.js
 ```
+docs/openapi.yaml
+```
+
+The Swagger UI includes all 27 endpoints with full request/response schemas, JWT authentication (click "Authorize"), and tag-based grouping.
 
 ---
 
 # CI/CD
 
-Pipeline:
-
-```plaintext
-GitHub
-↓
-
-Render Deploy
-
-↓
-
-Health Check
-
-↓
-
+```
+GitHub Push
+    |
+Render Auto-Deploy
+    |
+Health Check (/health)
+    |
 Production
 ```
 
@@ -627,11 +605,11 @@ Production
 
 Optimizations:
 
-* Aggregation Pipelines
-* Redis Cache
-* Queue Workers
-* Pagination
-* Async Jobs
+* MongoDB Aggregation Pipelines
+* Redis-backed Queue Workers
+* Pagination support
+* Async background jobs
+* Scheduled tasks (reminders, health checks)
 
 ---
 
@@ -641,14 +619,6 @@ BudgetBuddy Development Team
 
 ---
 
-Version
+Version: `v1.0.0`
 
-```plaintext
-v1.0.0
-```
-
-Last Updated
-
-```plaintext
-June 2026
-```
+Last Updated: `June 2026`
