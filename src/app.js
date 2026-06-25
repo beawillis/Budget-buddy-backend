@@ -71,11 +71,11 @@ app.use(
 
 app.use(helmet());
 
-app.use(mongoSanitize());
+//app.use(mongoSanitize());
 
-app.use(hpp());
+//app.use(hpp());
 
-app.use(sanitize);
+//app.use(sanitize);
 
 /* ======================
    REQUEST LOGGER
