@@ -1,13 +1,43 @@
-//cors.js
-const corsOptions={
+const cors = require("cors");
 
-    // Allow requests from the client URL specified in the environment variable
-origin:
-process.env.CLIENT_URL,
+module.exports = cors({
 
-credentials:true
+origin:(origin,callback)=>{
 
-};
+if(!origin){
+return callback(null,true);
+}
 
-module.exports=
-corsOptions;
+const allowed =
+
+origin.includes(".vercel.app") ||
+
+origin==="http://localhost:5500" ||
+
+origin==="http://localhost:3000";
+
+if(allowed){
+return callback(null,true);
+}
+
+callback(new Error("CORS blocked"));
+
+},
+
+credentials:true,
+
+methods:[
+"GET",
+"POST",
+"PUT",
+"PATCH",
+"DELETE",
+"OPTIONS"
+],
+
+allowedHeaders:[
+"Content-Type",
+"Authorization"
+]
+
+});
