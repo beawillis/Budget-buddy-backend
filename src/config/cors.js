@@ -12,9 +12,11 @@ const allowed =
 
 origin.includes(".vercel.app") ||
 
-origin==="http://localhost:5500" ||
+origin==="https://budget-buddy-fintech.vercel.app/" ||
 
-origin==="http://localhost:3000";
+origin==="https://budget-buddy-fintech-git-main-beawillis2005-2956s-projects.vercel.app/" ||
+
+origin==="https://budget-buddy-fintech-8jtzknec1-beawillis2005-2956s-projects.vercel.app/";
 
 if(allowed){
 return callback(null,true);
