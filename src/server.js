@@ -8,10 +8,9 @@ const connectDB=require("./config/db"); //import the connectDB function from db.
 
 connectDB();
 
-const PORT=process.env.PORT||3000;
+// This line is CRITICAL for Railway
+const PORT = process.env.PORT || 8080; 
 
-app.listen(PORT,()=>{console.log(`Server running on ${PORT}`);
-
-}
-
-);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
