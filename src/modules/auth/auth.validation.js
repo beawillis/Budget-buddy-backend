@@ -33,3 +33,39 @@ password:
 z.string()
 
 });
+
+exports.forgotPasswordSchema = z.object({
+
+email:
+
+z.email()
+
+});
+
+exports.verifyResetCodeSchema = z.object({
+
+email:
+
+z.email(),
+
+code:
+
+z.string().length(6)
+
+});
+
+exports.resetPasswordSchema = z.object({
+
+email:
+
+z.email(),
+
+code:
+
+z.string().length(6),
+
+newPassword:
+
+z.string().min(6)
+
+});

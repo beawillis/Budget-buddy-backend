@@ -50,6 +50,14 @@ type:String
 
 },
 
+resetCode:{
+type:String
+},
+
+resetCodeExpires:{
+type:Date
+},
+
 theme:{
 
 type:String,
