@@ -6,6 +6,7 @@ const hpp = require("hpp");
 
 const sanitize = require("./middlewares/sanitize");
 const corsOptions = require("./config/cors");
+const responseMiddleware = require("./middlewares/response");
 
 const app = express();
 
@@ -61,6 +62,8 @@ CORS MUST COME FIRST
 */
 app.use(cors(corsOptions));
 
+app.use(responseMiddleware);
+
 app.use(express.json());
 
 app.use(
@@ -70,12 +73,6 @@ app.use(
 );
 
 app.use(helmet());
-
-//app.use(mongoSanitize());
-
-//app.use(hpp());
-
-//app.use(sanitize);
 
 /* ======================
    REQUEST LOGGER
