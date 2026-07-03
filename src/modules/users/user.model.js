@@ -122,6 +122,18 @@ default:"user"
 
 },
 
+twoFactorEnabled:{
+
+type:Boolean,
+
+default:false
+
+},
+
+twoFactorSecret:String,
+
+twoFactorBackupCodes:[String],
+
 firebaseUid:String
 
 },

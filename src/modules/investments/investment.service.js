@@ -1,14 +1,14 @@
 exports.simulate=(
 
-amount,
-years,
-rate
+principal,
+rate,
+years
 
 )=>{
 
 const future=
 
-amount*
+principal*
 
 Math.pow(
 
@@ -22,7 +22,7 @@ years
 
 return{
 
-future
+future: Math.round(future * 100) / 100
 
 };
 

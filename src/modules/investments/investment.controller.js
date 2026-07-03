@@ -12,11 +12,11 @@ res.json(
 
 service.simulate(
 
-req.body.amount,
+req.body.principal,
 
-req.body.years,
+req.body.rate,
 
-req.body.rate
+req.body.years
 
 )
 

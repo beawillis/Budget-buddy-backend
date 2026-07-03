@@ -17,7 +17,7 @@ require(
 "../../middlewares/validate"
 );
 
-const { updateProfileSchema } =
+const { updateProfileSchema, changePasswordSchema } =
 require(
 "./user.validation"
 );
@@ -32,6 +32,8 @@ router.get("/profile", auth, controller.profile);
 router.put("/profile", auth, validate(updateProfileSchema), controller.update);
 
 router.post("/avatar", auth, upload.single("avatar"), controller.avatar);
+
+router.post("/change-password", auth, validate(changePasswordSchema), controller.changePassword);
 
 module.exports =
 router;

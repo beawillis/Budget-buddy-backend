@@ -87,3 +87,43 @@ next(err);
 }
 
 };
+
+exports.changePassword =
+async(
+req,
+res,
+next
+)=>{
+
+try{
+
+const result =
+
+await service
+.changePassword(
+
+req.user.id,
+
+req.body.currentPassword,
+
+req.body.newPassword
+
+);
+
+res.json(
+result
+);
+
+}catch(err){
+
+res.status(400)
+.json({
+
+message:
+err.message
+
+});
+
+}
+
+};
