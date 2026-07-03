@@ -7,13 +7,27 @@ const jwt = require(
 "jsonwebtoken"
 );
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resend = null;
+
+const getResend = () => {
+  if (!resend && process.env.RESEND_API_KEY) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resend;
+};
 
 const sendResetEmail = async(to, code)=>{
 
+const resendClient = getResend();
+
+if (!resendClient) {
+  console.warn("Resend not configured - password reset email not sent");
+  return;
+}
+
 try {
 
-const result = await resend.emails.send({
+const result = await resendClient.emails.send({
 
 from: process.env.EMAIL_FROM || "noreply@budgetbuddy.app",
 
