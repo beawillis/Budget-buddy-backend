@@ -23,8 +23,9 @@ process.env.REDIS_PASSWORD,
 maxRetriesPerRequest:
 1,
 
-retryStrategy(){
-return null;
+retryStrategy(times){
+const delay = Math.min(times*50, 2000);
+return delay;
 }
 
 });

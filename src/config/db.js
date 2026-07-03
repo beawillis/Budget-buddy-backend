@@ -18,11 +18,16 @@ console.log(
 
 catch(err){ //catch any error that occurs during the connection process
 
-console.log(
+console.error(
+"Database Connection Error:",
 err.message
 ); //log the error message to the console
 
-process.exit(1); //exit the process with a failure code (1) to indicate that the connection failed
+if(process.env.NODE_ENV==='production'){
+  setTimeout(()=>connectDB(), 5000); //retry after 5 seconds
+}else{
+  process.exit(1);
+}
 
 }
 
