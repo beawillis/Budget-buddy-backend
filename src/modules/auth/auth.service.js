@@ -252,11 +252,21 @@ return { message: "If that email exists, a reset code has been sent." };
 
 const code = crypto.randomInt(100000, 999999).toString();
 
-user.resetCode = code;
+await User.findByIdAndUpdate(
 
-user.resetCodeExpires = Date.now() + 10 * 60 * 1000;
+user._id,
 
-await user.save();
+{
+
+resetCode: code,
+
+resetCodeExpires: Date.now() + 10 * 60 * 1000
+
+},
+
+{ new: true }
+
+);
 
 // Send email but don't fail if it doesn't work
 await sendResetEmail(user.email, code);
@@ -303,13 +313,23 @@ throw new Error("Reset code is incorrect.");
 
 const hash = await bcrypt.hash(newPassword, 10);
 
-user.password = hash;
+await User.findByIdAndUpdate(
 
-user.resetCode = undefined;
+user._id,
 
-user.resetCodeExpires = undefined;
+{
 
-await user.save();
+password: hash,
+
+resetCode: undefined,
+
+resetCodeExpires: undefined
+
+},
+
+{ new: true }
+
+);
 
 return { message: "Password updated successfully." };
 
